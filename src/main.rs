@@ -1,6 +1,32 @@
+use std::io;
+
 fn main() {
     let mut moves = [["-", "-", "-"], ["-", "-", "-"], ["-", "-", "-"]];
+    let mut player: i8 = 1;
 
+    loop {
+        board(&moves);
+
+        println!("Please make your move Player {}. Ex: 1A", player);
+
+        let mut player_move = String::new();
+
+        io::stdin()
+            .read_line(&mut player_move)
+            .expect("Failed to read line");
+
+        println!("Your move was: {player_move}");
+
+        moves[0][0] = "X";
+
+        player = match player {
+            1 => 2,
+            _ => 1,
+        }
+    }
+}
+
+fn board(moves: &[[&str; 3]]) {
     let title = "HASH GAME";
     let bar = "|";
 
