@@ -1,4 +1,4 @@
-use std::io;
+use std::{error::Error, io};
 
 fn main() {
     let mut moves = [["-", "-", "-"], ["-", "-", "-"], ["-", "-", "-"]];
@@ -15,9 +15,24 @@ fn main() {
             .read_line(&mut player_move)
             .expect("Failed to read line");
 
-        println!("Your move was: {player_move}");
+        let column = match get_column_value(&player_move) {
+            Ok(value) => value,
+            _ => {
+                println!("Invalid column!");
+                continue;
+            }
+        };
 
-        moves[0][0] = "X";
+        let line = match get_line_value(&player_move) {
+            Ok(value) => value,
+            _ => {
+                println!("Invalid line!");
+                continue;
+            }
+        };
+
+        println!("Column {}", column);
+        println!("Line {}", line);
 
         player = match player {
             1 => 2,
@@ -48,4 +63,25 @@ fn board(moves: &[[&str; 3]]) {
         bar, moves[2][0], bar, moves[2][1], bar, moves[2][2], bar
     );
     println!("{: >2}+{:-^3}+{:-^3}+{:-^3}+", "", "", "", "");
+}
+
+fn get_column_value(player_move: &String) -> Result<i8, ()> {
+    match player_move
+        .chars()
+        .nth(0)
+        .expect("Invalid character")
+        .to_digit(10)
+    {
+        Some(column) if (1..=3).contains(&column) => Ok(column as i8),
+        _ => Err(()),
+    }
+}
+
+fn get_line_value(player_move: &String) -> Result<i8, ()> {
+    match player_move.chars().nth(1).expect("Invalid character") {
+        'A' | 'a' => Ok(1),
+        'B' | 'b' => Ok(2),
+        'C' | 'c' => Ok(3),
+        _ => Err(()),
+    }
 }
