@@ -1,4 +1,4 @@
-use std::{error::Error, io};
+use std::io;
 
 fn main() {
     let mut moves = [["-", "-", "-"], ["-", "-", "-"], ["-", "-", "-"]];
@@ -7,7 +7,10 @@ fn main() {
     loop {
         board(&moves);
 
-        println!("Please make your move Player {}. Ex: 1A", player);
+        println!(
+            "Player's {} turn. Tip: Choose Column and Line Ex: 0A",
+            player
+        );
 
         let mut player_move = String::new();
 
@@ -31,12 +34,23 @@ fn main() {
             }
         };
 
-        println!("Column {}", column);
-        println!("Line {}", line);
+        moves[line][column] = match player {
+            1 => "O",
+            _ => "X",
+        };
 
-        player = match player {
-            1 => 2,
-            _ => 1,
+        match has_winner(&moves) {
+            true => {
+                println!("Congratulations!!!, Player {} winner", { player });
+                board(&moves);
+                break;
+            }
+            _ => {
+                player = match player {
+                    1 => 2,
+                    _ => 1,
+                }
+            }
         }
     }
 }
@@ -46,7 +60,7 @@ fn board(moves: &[[&str; 3]]) {
     let bar = "|";
 
     println!("{: >2}{:^13}", "", title);
-    println!("{: >5}{: >4}{: >4}", "1", "2", "3");
+    println!("{: >5}{: >4}{: >4}", "0", "1", "2");
     println!("{: >2}+{:-^3}+{:-^3}+{:-^3}+", "", "", "", "");
     println!(
         "A {: <2}{}{: >2}{: >2}{: >2}{: >2}{: >2}",
@@ -65,23 +79,32 @@ fn board(moves: &[[&str; 3]]) {
     println!("{: >2}+{:-^3}+{:-^3}+{:-^3}+", "", "", "", "");
 }
 
-fn get_column_value(player_move: &String) -> Result<i8, ()> {
+fn get_column_value(player_move: &String) -> Result<usize, ()> {
     match player_move
         .chars()
         .nth(0)
         .expect("Invalid character")
         .to_digit(10)
     {
-        Some(column) if (1..=3).contains(&column) => Ok(column as i8),
+        Some(column) if (0..=2).contains(&column) => Ok(column as usize),
         _ => Err(()),
     }
 }
 
-fn get_line_value(player_move: &String) -> Result<i8, ()> {
+fn get_line_value(player_move: &String) -> Result<usize, ()> {
     match player_move.chars().nth(1).expect("Invalid character") {
-        'A' | 'a' => Ok(1),
-        'B' | 'b' => Ok(2),
-        'C' | 'c' => Ok(3),
+        'A' | 'a' => Ok(0),
+        'B' | 'b' => Ok(1),
+        'C' | 'c' => Ok(2),
         _ => Err(()),
+    }
+}
+
+fn has_winner(moves: &[[&str; 3]]) -> bool {
+    match (&moves[0], &moves[1], &moves[2]) {
+        value => value.0.iter().all(|x| x == &"O" || x == &"X"),
+        value => value.1.iter().all(|x| x == &"O" || x == &"X"),
+        value => value.2.iter().all(|x| x == &"O" || x == &"X"),
+        _ => false,
     }
 }
