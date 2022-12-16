@@ -34,14 +34,22 @@ fn main() {
             }
         };
 
-        moves[line][column] = match player {
-            1 => "O",
-            _ => "X",
-        };
+        match moves[line][column] {
+            "-" => {
+                moves[line][column] = match player {
+                    1 => "O",
+                    _ => "X",
+                };
+            }
+            _ => {
+                println!("*** This field already has a move! ***");
+                continue;
+            }
+        }
 
-        match has_winner(&moves) {
+        match has_winner(&moves, &moves[line][column]) {
             true => {
-                println!("Congratulations!!!, Player {} winner", { player });
+                println!("*** Congratulations!!!, Player {} winner ***", { player });
                 board(&moves);
                 break;
             }
@@ -100,11 +108,45 @@ fn get_line_value(player_move: &String) -> Result<usize, ()> {
     }
 }
 
-fn has_winner(moves: &[[&str; 3]]) -> bool {
-    match (&moves[0], &moves[1], &moves[2]) {
-        value => value.0.iter().all(|x| x == &"O" || x == &"X"),
-        value => value.1.iter().all(|x| x == &"O" || x == &"X"),
-        value => value.2.iter().all(|x| x == &"O" || x == &"X"),
-        _ => false,
+fn has_winner(moves: &[[&str; 3]], char: &&str) -> bool {
+    if moves[0].iter().all(|x| x == char) {
+        return true;
     }
+    if moves[1].iter().all(|x| x == char) {
+        return true;
+    }
+    if moves[2].iter().all(|x| x == char) {
+        return true;
+    }
+    if [moves[0][0], moves[1][0], moves[2][0]]
+        .iter()
+        .all(|x| x == char)
+    {
+        return true;
+    }
+    if [moves[0][1], moves[1][1], moves[2][1]]
+        .iter()
+        .all(|x| x == char)
+    {
+        return true;
+    }
+    if [moves[0][2], moves[1][2], moves[2][2]]
+        .iter()
+        .all(|x| x == char)
+    {
+        return true;
+    }
+    if [moves[0][0], moves[1][1], moves[2][2]]
+        .iter()
+        .all(|x| x == char)
+    {
+        return true;
+    }
+    if [moves[0][2], moves[1][1], moves[2][0]]
+        .iter()
+        .all(|x| x == char)
+    {
+        return true;
+    }
+    return false;
 }
