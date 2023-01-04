@@ -64,7 +64,7 @@ fn main() {
 }
 
 fn board(moves: &[[&str; 3]]) {
-    let title = "HASH GAME";
+    let title = "TIC TAC TOE GAME";
     let bar = "|";
 
     println!("{: >2}{:^13}", "", title);
