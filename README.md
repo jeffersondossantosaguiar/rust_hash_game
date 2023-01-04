@@ -1,2 +1,2 @@
-# rust_hash_game
-A simple implementation of hash game with rust
+# Tic Tac Toe
+A simple implementation of Tic Tac Toe game with rust
